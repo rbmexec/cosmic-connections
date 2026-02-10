@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, ChevronDown, ChevronUp, Heart, Sparkles } from "lucide-react";
 import { lifePathData, calculateCompatibility, getCompatibilityLabel, isSoulmateMatch } from "@/lib/cosmic-calculations";
 import CompatibilityBar from "./CompatibilityBar";
+import MatchInsights from "./MatchInsights";
 import type { UserProfile } from "@/types/profile";
 
-const currentUser: UserProfile = {
+const defaultUser: UserProfile = {
   id: "0", name: "You", age: 28, birthYear: 1996, location: "NYC", occupation: "Engineer",
   photo: "", lifePath: 7,
   westernZodiac: { sign: "Virgo", symbol: "\u264D", element: "Earth" },
@@ -15,13 +16,14 @@ const currentUser: UserProfile = {
   prompts: [],
 };
 
-export default function PartnerCard({ profile }: { profile: UserProfile }) {
+export default function PartnerCard({ profile, allProfiles = [], currentUser }: { profile: UserProfile; allProfiles?: UserProfile[]; currentUser?: UserProfile }) {
+  const user = currentUser ?? defaultUser;
   const [expanded, setExpanded] = useState(false);
-  const compat = calculateCompatibility(currentUser, profile);
+  const compat = calculateCompatibility(user, profile);
   const lp = lifePathData[profile.lifePath];
 
   const compatLabel = getCompatibilityLabel(compat.overall);
-  const isSoulmate = isSoulmateMatch(currentUser, profile);
+  const isSoulmate = isSoulmateMatch(user, profile);
 
   const emotional = Math.min(99, compat.western + Math.floor(Math.random() * 6));
   const lifeGoals = Math.min(99, compat.lifePath + Math.floor(Math.random() * 5));
@@ -92,7 +94,7 @@ export default function PartnerCard({ profile }: { profile: UserProfile }) {
             <p className="text-[10px] text-mode-partner font-bold uppercase tracking-widest">Cosmic Insight</p>
           </div>
           <p className="text-[13px] text-slate-300 leading-relaxed">
-            Your {currentUser.westernZodiac.element} energy harmonizes beautifully with {profile.name}&apos;s {profile.westernZodiac.element} nature.
+            Your {user.westernZodiac.element} energy harmonizes beautifully with {profile.name}&apos;s {profile.westernZodiac.element} nature.
             As a Life Path {profile.lifePath} ({lp?.name}), they bring {lp?.traits[0].toLowerCase()} and {lp?.traits[1].toLowerCase()} energy to complement your depth.
           </p>
         </div>
@@ -145,6 +147,11 @@ export default function PartnerCard({ profile }: { profile: UserProfile }) {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Community Compatibility */}
+        {allProfiles.length > 1 && (
+          <MatchInsights profile={profile} allProfiles={allProfiles} accentColor="#ec4899" />
+        )}
 
         {/* Prompts */}
         <div className="space-y-2.5">

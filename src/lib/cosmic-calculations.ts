@@ -1,4 +1,4 @@
-import type { CompatibilityResult, LifePathInfo, UserProfile } from "@/types/profile";
+import type { ChineseZodiac, CompatibilityResult, LifePathInfo, UserProfile, WesternZodiac } from "@/types/profile";
 
 export const lifePathData: Record<number, LifePathInfo> = {
   1: { number: 1, name: "The Pioneer", traits: ["Independent", "Ambitious", "Original", "Self-driven", "Bold"], description: "Natural leaders who forge their own path" },
@@ -212,3 +212,208 @@ export const chineseElementDescriptions: Record<string, string> = {
   Fire: "Passionate, adventurous, and dynamic. Fire represents enthusiasm and energy.",
   Earth: "Stable, reliable, and nurturing. Earth represents patience and honesty.",
 };
+
+// ─── Community Compatibility (cross-user analysis) ───
+export interface MatchInsightsData {
+  averageScore: number;
+  bestMatches: { profile: UserProfile; score: number }[];
+  distribution: { soulmate: number; excellent: number; great: number; worthExploring: number; challenging: number };
+  rank: string | null;
+}
+
+export function calculateAllCompatibility(
+  profile: UserProfile,
+  allProfiles: UserProfile[],
+): MatchInsightsData {
+  const others = allProfiles.filter((p) => p.id !== profile.id);
+  const results = others.map((other) => ({
+    profile: other,
+    score: calculateCompatibility(profile, other).overall,
+  }));
+
+  const sorted = [...results].sort((a, b) => b.score - a.score);
+  const bestMatches = sorted.slice(0, 3);
+
+  const total = results.reduce((sum, r) => sum + r.score, 0);
+  const averageScore = results.length > 0 ? Math.round(total / results.length) : 0;
+
+  const distribution = { soulmate: 0, excellent: 0, great: 0, worthExploring: 0, challenging: 0 };
+  for (const r of results) {
+    if (r.score >= 90) distribution.soulmate++;
+    else if (r.score >= 80) distribution.excellent++;
+    else if (r.score >= 70) distribution.great++;
+    else if (r.score >= 55) distribution.worthExploring++;
+    else distribution.challenging++;
+  }
+
+  let rank: string | null = null;
+  if (averageScore >= 80) rank = "Top Match Maker";
+  else if (averageScore >= 70) rank = "Highly Compatible";
+  else if (averageScore >= 60) rank = "Great Connector";
+
+  return { averageScore, bestMatches, distribution, rank };
+}
+
+// ─── Birthday Number & Personal Year ───
+
+function reduceToSingleDigit(n: number): number {
+  while (n > 9 && n !== 11 && n !== 22 && n !== 33) {
+    let next = 0;
+    while (n > 0) {
+      next += n % 10;
+      n = Math.floor(n / 10);
+    }
+    n = next;
+  }
+  return n;
+}
+
+export function calculateBirthdayNumber(day: number): number {
+  return reduceToSingleDigit(day);
+}
+
+export function calculatePersonalYear(birthMonth: number, birthDay: number, year?: number): number {
+  const y = year ?? new Date().getFullYear();
+  const digits = `${birthMonth}${birthDay}${y}`;
+  let sum = 0;
+  for (const ch of digits) {
+    sum += Number(ch);
+  }
+  return reduceToSingleDigit(sum);
+}
+
+export const personalYearData: Record<number, { name: string; description: string }> = {
+  1: { name: "New Beginnings", description: "A year of fresh starts, independence, and planting seeds for the future. Take initiative and embrace new opportunities." },
+  2: { name: "Partnerships", description: "A year of cooperation, patience, and deepening relationships. Focus on diplomacy and finding balance." },
+  3: { name: "Creativity", description: "A year of self-expression, joy, and social expansion. Let your creative talents shine and communicate freely." },
+  4: { name: "Foundation", description: "A year of hard work, discipline, and building solid structures. Lay the groundwork for long-term goals." },
+  5: { name: "Change", description: "A year of freedom, adventure, and unexpected shifts. Embrace flexibility and explore new horizons." },
+  6: { name: "Responsibility", description: "A year of home, family, and service to others. Nurture your relationships and create harmony." },
+  7: { name: "Reflection", description: "A year of introspection, spiritual growth, and inner wisdom. Seek deeper truths and trust your intuition." },
+  8: { name: "Abundance", description: "A year of achievement, power, and material success. Step into your authority and reap what you've sown." },
+  9: { name: "Completion", description: "A year of endings, release, and transformation. Let go of what no longer serves you to make room for the new." },
+};
+
+export const birthdayNumberData: Record<number, { name: string; description: string }> = {
+  1: { name: "The Leader", description: "Independent and driven, you bring originality and determination to everything you do." },
+  2: { name: "The Diplomat", description: "Sensitive and cooperative, you excel at creating harmony and understanding others." },
+  3: { name: "The Communicator", description: "Creative and expressive, you inspire others with your words and artistic vision." },
+  4: { name: "The Organizer", description: "Practical and methodical, you build lasting foundations through discipline and reliability." },
+  5: { name: "The Adventurer", description: "Dynamic and versatile, you thrive on change, travel, and new experiences." },
+  6: { name: "The Caretaker", description: "Nurturing and responsible, you're devoted to family, home, and community." },
+  7: { name: "The Thinker", description: "Analytical and intuitive, you seek knowledge and deeper meaning in life." },
+  8: { name: "The Achiever", description: "Ambitious and authoritative, you're destined for material success and leadership." },
+  9: { name: "The Humanitarian", description: "Compassionate and generous, you feel a deep calling to serve and uplift others." },
+  11: { name: "The Illuminator", description: "A master number bearer — visionary, intuitive, and spiritually gifted." },
+  22: { name: "The Master Architect", description: "A master number bearer — capable of turning grand visions into reality." },
+};
+
+// ─── Birthday-based Computation Functions ───
+
+export function calculateLifePath(date: Date): number {
+  const mm = date.getMonth() + 1;
+  const dd = date.getDate();
+  const yyyy = date.getFullYear();
+
+  const digits = `${mm}${dd}${yyyy}`;
+  let sum = 0;
+  for (const ch of digits) {
+    sum += Number(ch);
+  }
+
+  // Reduce until single digit or master number
+  while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+    let next = 0;
+    while (sum > 0) {
+      next += sum % 10;
+      sum = Math.floor(sum / 10);
+    }
+    sum = next;
+  }
+
+  return sum;
+}
+
+export function getWesternZodiacFromDate(date: Date): WesternZodiac {
+  const month = date.getMonth() + 1; // 1-12
+  const day = date.getDate();
+
+  const signs: { sign: string; symbol: string; element: WesternZodiac["element"]; startMonth: number; startDay: number }[] = [
+    { sign: "Capricorn",   symbol: "♑", element: "Earth", startMonth: 12, startDay: 22 },
+    { sign: "Aquarius",    symbol: "♒", element: "Air",   startMonth: 1,  startDay: 20 },
+    { sign: "Pisces",      symbol: "♓", element: "Water", startMonth: 2,  startDay: 19 },
+    { sign: "Aries",       symbol: "♈", element: "Fire",  startMonth: 3,  startDay: 21 },
+    { sign: "Taurus",      symbol: "♉", element: "Earth", startMonth: 4,  startDay: 20 },
+    { sign: "Gemini",      symbol: "♊", element: "Air",   startMonth: 5,  startDay: 21 },
+    { sign: "Cancer",      symbol: "♋", element: "Water", startMonth: 6,  startDay: 21 },
+    { sign: "Leo",         symbol: "♌", element: "Fire",  startMonth: 7,  startDay: 23 },
+    { sign: "Virgo",       symbol: "♍", element: "Earth", startMonth: 8,  startDay: 23 },
+    { sign: "Libra",       symbol: "♎", element: "Air",   startMonth: 9,  startDay: 23 },
+    { sign: "Scorpio",     symbol: "♏", element: "Water", startMonth: 10, startDay: 23 },
+    { sign: "Sagittarius", symbol: "♐", element: "Fire",  startMonth: 11, startDay: 22 },
+  ];
+
+  // Check from last (Sagittarius) to first (Capricorn)
+  // Capricorn spans Dec 22 – Jan 19, handled specially
+  if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) {
+    return { sign: "Capricorn", symbol: "♑", element: "Earth" };
+  }
+
+  for (let i = signs.length - 1; i >= 1; i--) {
+    const s = signs[i];
+    if (month === s.startMonth && day >= s.startDay) {
+      return { sign: s.sign, symbol: s.symbol, element: s.element };
+    }
+    if (month > s.startMonth) {
+      return { sign: s.sign, symbol: s.symbol, element: s.element };
+    }
+  }
+
+  // Fallback (Jan 1-19 already handled above — this covers Aquarius Jan 20+)
+  return { sign: "Aquarius", symbol: "♒", element: "Air" };
+}
+
+export function getChineseZodiacFromYear(year: number): ChineseZodiac {
+  const animals: { animal: string; symbol: string }[] = [
+    { animal: "Rat",     symbol: "🐀" },
+    { animal: "Ox",      symbol: "🐂" },
+    { animal: "Tiger",   symbol: "🐅" },
+    { animal: "Rabbit",  symbol: "🐇" },
+    { animal: "Dragon",  symbol: "🐉" },
+    { animal: "Snake",   symbol: "🐍" },
+    { animal: "Horse",   symbol: "🐴" },
+    { animal: "Goat",    symbol: "🐐" },
+    { animal: "Monkey",  symbol: "🐒" },
+    { animal: "Rooster", symbol: "🐓" },
+    { animal: "Dog",     symbol: "🐕" },
+    { animal: "Pig",     symbol: "🐖" },
+  ];
+
+  const elements: { element: ChineseZodiac["element"]; elementSymbol: string; elementColor: string }[] = [
+    { element: "Wood",  elementSymbol: "🌳", elementColor: "#22c55e" },
+    { element: "Wood",  elementSymbol: "🌳", elementColor: "#22c55e" },
+    { element: "Fire",  elementSymbol: "🔥", elementColor: "#ef4444" },
+    { element: "Fire",  elementSymbol: "🔥", elementColor: "#ef4444" },
+    { element: "Earth", elementSymbol: "🌍", elementColor: "#a16207" },
+    { element: "Earth", elementSymbol: "🌍", elementColor: "#a16207" },
+    { element: "Metal", elementSymbol: "⚙️", elementColor: "#94a3b8" },
+    { element: "Metal", elementSymbol: "⚙️", elementColor: "#94a3b8" },
+    { element: "Water", elementSymbol: "💧", elementColor: "#3b82f6" },
+    { element: "Water", elementSymbol: "💧", elementColor: "#3b82f6" },
+  ];
+
+  const animalIndex = (year - 4) % 12;
+  const elementIndex = (year - 4) % 10;
+
+  const a = animals[animalIndex >= 0 ? animalIndex : animalIndex + 12];
+  const e = elements[elementIndex >= 0 ? elementIndex : elementIndex + 10];
+
+  return {
+    animal: a.animal,
+    symbol: a.symbol,
+    element: e.element,
+    elementColor: e.elementColor,
+    elementSymbol: e.elementSymbol,
+    fullName: `${e.element} ${a.animal}`,
+  };
+}

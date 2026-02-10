@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import { Briefcase, MapPin, TrendingUp } from "lucide-react";
 import { lifePathData, calculateCompatibility } from "@/lib/cosmic-calculations";
 import CompatibilityBar from "./CompatibilityBar";
+import MatchInsights from "./MatchInsights";
 import type { UserProfile } from "@/types/profile";
 
-const currentUser: UserProfile = {
+const defaultUser: UserProfile = {
   id: "0", name: "You", age: 28, birthYear: 1996, location: "NYC", occupation: "Engineer",
   photo: "", lifePath: 7,
   westernZodiac: { sign: "Virgo", symbol: "\u264D", element: "Earth" },
@@ -14,8 +15,9 @@ const currentUser: UserProfile = {
   prompts: [],
 };
 
-export default function BusinessCard({ profile }: { profile: UserProfile }) {
-  const compat = calculateCompatibility(currentUser, profile);
+export default function BusinessCard({ profile, allProfiles = [], currentUser }: { profile: UserProfile; allProfiles?: UserProfile[]; currentUser?: UserProfile }) {
+  const user = currentUser ?? defaultUser;
+  const compat = calculateCompatibility(user, profile);
   const lp = lifePathData[profile.lifePath];
 
   const workStyle = Math.min(99, compat.lifePath + Math.floor(Math.random() * 5));
@@ -80,6 +82,13 @@ export default function BusinessCard({ profile }: { profile: UserProfile }) {
         <CompatibilityBar label="Communication" score={communication} color="#10b981" delay={0.15} />
         <CompatibilityBar label="Vision Alignment" score={visionAlignment} color="#10b981" delay={0.3} />
       </div>
+
+      {/* Community Compatibility */}
+      {allProfiles.length > 1 && (
+        <div className="px-5 pb-4">
+          <MatchInsights profile={profile} allProfiles={allProfiles} accentColor="#10b981" compact />
+        </div>
+      )}
 
       {/* Prompts */}
       <div className="px-5 pb-5 space-y-2.5">

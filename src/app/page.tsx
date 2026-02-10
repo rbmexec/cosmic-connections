@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Sparkles, Bell, Settings } from "lucide-react";
 import CosmicBackground from "@/components/CosmicBackground";
@@ -12,13 +12,23 @@ import PartnerCard from "@/components/PartnerCard";
 import SwipeCard from "@/components/SwipeCard";
 import SwipeActions from "@/components/SwipeActions";
 import MatchModal from "@/components/MatchModal";
+import OnboardingScreen from "@/components/OnboardingScreen";
 import { sampleProfiles } from "@/data/profiles";
+import { getUserProfile } from "@/lib/user-storage";
 import type { AppMode, UserProfile } from "@/types/profile";
 
 export default function Home() {
   const [mode, setMode] = useState<AppMode>("attraction");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [matchedProfile, setMatchedProfile] = useState<UserProfile | null>(null);
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const stored = getUserProfile();
+    if (stored) setCurrentUser(stored);
+    setLoaded(true);
+  }, []);
 
   const profile = sampleProfiles[currentIndex % sampleProfiles.length];
   const nextProfile = sampleProfiles[(currentIndex + 1) % sampleProfiles.length];
@@ -39,6 +49,14 @@ export default function Home() {
   }, [advance]);
 
   const showSwipe = mode !== "personal";
+
+  // Don't render until we've checked localStorage
+  if (!loaded) return null;
+
+  // Show onboarding if no profile saved
+  if (!currentUser) {
+    return <OnboardingScreen onComplete={(p) => setCurrentUser(p)} />;
+  }
 
   return (
     <main className="min-h-[100dvh] relative">
@@ -86,8 +104,8 @@ export default function Home() {
             {showSwipe && (
               <div className="absolute inset-0 -z-10 scale-[0.95] opacity-50 blur-[1px] pointer-events-none translate-y-2">
                 {mode === "attraction" && <AttractionCard profile={nextProfile} />}
-                {mode === "business" && <BusinessCard profile={nextProfile} />}
-                {mode === "partner" && <PartnerCard profile={nextProfile} />}
+                {mode === "business" && <BusinessCard profile={nextProfile} allProfiles={sampleProfiles} currentUser={currentUser} />}
+                {mode === "partner" && <PartnerCard profile={nextProfile} allProfiles={sampleProfiles} currentUser={currentUser} />}
               </div>
             )}
 
@@ -105,10 +123,10 @@ export default function Home() {
                   onSwipeRight={handleLike}
                   enabled={showSwipe}
                 >
-                  {mode === "personal" && <PersonalCard profile={profile} />}
+                  {mode === "personal" && <PersonalCard profile={currentUser} currentUser={currentUser} allProfiles={sampleProfiles} />}
                   {mode === "attraction" && <AttractionCard profile={profile} />}
-                  {mode === "business" && <BusinessCard profile={profile} />}
-                  {mode === "partner" && <PartnerCard profile={profile} />}
+                  {mode === "business" && <BusinessCard profile={profile} allProfiles={sampleProfiles} currentUser={currentUser} />}
+                  {mode === "partner" && <PartnerCard profile={profile} allProfiles={sampleProfiles} currentUser={currentUser} />}
                 </SwipeCard>
               </motion.div>
             </AnimatePresence>
@@ -130,40 +148,6 @@ export default function Home() {
             </motion.div>
           )}
 
-          {/* Personal mode navigation */}
-          {mode === "personal" && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center justify-center gap-4 mt-5"
-            >
-              <button
-                onClick={() => setCurrentIndex((i) => (i - 1 + sampleProfiles.length) % sampleProfiles.length)}
-                className="px-6 py-2.5 rounded-2xl glass-card text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition-all"
-              >
-                Previous
-              </button>
-              <div className="flex gap-1.5">
-                {sampleProfiles.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentIndex(i)}
-                    className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                      i === currentIndex % sampleProfiles.length
-                        ? "bg-mode-personal w-4"
-                        : "bg-slate-600 hover:bg-slate-400"
-                    }`}
-                  />
-                ))}
-              </div>
-              <button
-                onClick={() => setCurrentIndex((i) => (i + 1) % sampleProfiles.length)}
-                className="px-6 py-2.5 rounded-2xl glass-card text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/10 transition-all"
-              >
-                Next
-              </button>
-            </motion.div>
-          )}
         </div>
 
         {/* Footer */}

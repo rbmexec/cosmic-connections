@@ -30,6 +30,8 @@ export interface UserProfile {
   westernZodiac: WesternZodiac;
   chineseZodiac: ChineseZodiac;
   prompts: Prompt[];
+  birthMonth?: number;
+  birthDay?: number;
 }
 
 export interface CompatibilityResult {
