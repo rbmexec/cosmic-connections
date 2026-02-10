@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, ChevronDown, ChevronUp, Heart } from "lucide-react";
+import { MapPin, ChevronDown, ChevronUp, Heart, Sparkles } from "lucide-react";
 import { lifePathData, calculateCompatibility } from "@/lib/cosmic-calculations";
 import CompatibilityBar from "./CompatibilityBar";
 import type { UserProfile } from "@/types/profile";
@@ -30,32 +30,87 @@ export default function PartnerCard({ profile }: { profile: UserProfile }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card rounded-3xl overflow-hidden max-w-sm mx-auto"
+      className="glass-card rounded-[28px] overflow-hidden max-w-sm mx-auto card-stack-shadow"
     >
-      <div className="relative h-56">
+      {/* Photo */}
+      <div className="relative h-64">
         <img src={profile.photo} alt={profile.name} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-cosmic-card via-transparent to-transparent" />
-        <div className="absolute bottom-4 left-4 right-4">
-          <h2 className="text-2xl font-bold font-serif">{profile.name}, {profile.age}</h2>
+        <div className="absolute inset-0 photo-gradient" />
+
+        {/* Compatibility Ring */}
+        <div className="absolute top-4 right-4">
+          <div className="relative w-16 h-16">
+            <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="15.5" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(236, 72, 153, 0.15)" strokeWidth="2.5" />
+              <circle
+                cx="18" cy="18" r="15.5" fill="none"
+                stroke="#ec4899" strokeWidth="2.5"
+                strokeDasharray={`${compat.overall} ${100 - compat.overall}`}
+                strokeLinecap="round"
+                className="transition-all duration-1000"
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-sm font-bold text-mode-partner">{compat.overall}%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Profile Info */}
+        <div className="absolute bottom-4 left-5 right-5">
+          <h2 className="text-[28px] font-bold tracking-tight">
+            {profile.name}<span className="text-slate-300 font-light ml-2">{profile.age}</span>
+          </h2>
           <p className="text-sm text-slate-200">{profile.occupation}</p>
-          <div className="flex items-center gap-1 text-slate-300 text-xs mt-0.5">
+          <div className="flex items-center gap-1.5 text-slate-400 text-xs mt-0.5">
             <MapPin size={11} />
             <span>{profile.location}</span>
           </div>
         </div>
-        <div className="absolute top-4 right-4 flex items-center gap-1.5 px-3 py-1.5 rounded-full glass-card">
-          <Heart size={14} className="text-mode-partner fill-mode-partner" />
-          <span className="text-sm font-bold text-mode-partner">{compat.overall}%</span>
-        </div>
       </div>
 
       <div className="p-5 space-y-4">
+        {/* Cosmic Insight */}
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-mode-partner/10 via-mode-partner/5 to-transparent border border-mode-partner/15">
+          <div className="flex items-center gap-1.5 mb-2">
+            <Sparkles size={12} className="text-mode-partner" />
+            <p className="text-[10px] text-mode-partner font-bold uppercase tracking-widest">Cosmic Insight</p>
+          </div>
+          <p className="text-[13px] text-slate-300 leading-relaxed">
+            Your {currentUser.westernZodiac.element} energy harmonizes beautifully with {profile.name}&apos;s {profile.westernZodiac.element} nature.
+            As a Life Path {profile.lifePath} ({lp?.name}), they bring {lp?.traits[0].toLowerCase()} and {lp?.traits[1].toLowerCase()} energy to complement your depth.
+          </p>
+        </div>
+
+        {/* Cosmic Trio */}
+        <div className="flex gap-2">
+          <div className="flex-1 p-3 rounded-xl bg-amber-accent/5 border border-amber-accent/10 text-center">
+            <span className="text-lg font-bold text-gradient-gold">{profile.lifePath}</span>
+            <p className="text-[9px] text-slate-500 uppercase tracking-wider mt-0.5">{lp?.name}</p>
+          </div>
+          <div className="flex-1 p-3 rounded-xl bg-mode-personal/5 border border-mode-personal/10 text-center">
+            <span className="text-lg">{profile.westernZodiac.symbol}</span>
+            <p className="text-[9px] text-slate-500 uppercase tracking-wider mt-0.5">{profile.westernZodiac.sign}</p>
+          </div>
+          <div className="flex-1 p-3 rounded-xl bg-green-500/5 border border-green-500/10 text-center">
+            <span className="text-lg">{profile.chineseZodiac.symbol}</span>
+            <p className="text-[9px] text-slate-500 uppercase tracking-wider mt-0.5">{profile.chineseZodiac.fullName}</p>
+          </div>
+        </div>
+
+        {/* Deep Compatibility Expandable */}
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center justify-between w-full text-left"
+          className="flex items-center justify-between w-full p-3 rounded-xl bg-white/[0.03] border border-white/5 transition-smooth hover:bg-white/[0.06]"
         >
-          <span className="text-xs text-slate-500 uppercase tracking-wider">Deep Compatibility</span>
-          {expanded ? <ChevronUp size={16} className="text-slate-500" /> : <ChevronDown size={16} className="text-slate-500" />}
+          <div className="flex items-center gap-2">
+            <Heart size={14} className="text-mode-partner" />
+            <span className="text-xs font-semibold text-slate-300">Deep Compatibility Analysis</span>
+          </div>
+          {expanded
+            ? <ChevronUp size={16} className="text-slate-500" />
+            : <ChevronDown size={16} className="text-slate-500" />
+          }
         </button>
 
         <AnimatePresence>
@@ -64,38 +119,24 @@ export default function PartnerCard({ profile }: { profile: UserProfile }) {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
               className="space-y-3 overflow-hidden"
             >
               <CompatibilityBar label="Emotional Bond" score={emotional} color="#ec4899" delay={0} />
-              <CompatibilityBar label="Life Goals" score={lifeGoals} color="#ec4899" delay={0.1} />
-              <CompatibilityBar label="Communication" score={communication} color="#ec4899" delay={0.2} />
+              <CompatibilityBar label="Life Goals" score={lifeGoals} color="#f472b6" delay={0.1} />
+              <CompatibilityBar label="Communication" score={communication} color="#f9a8d4" delay={0.2} />
               <CompatibilityBar label="Values Match" score={values} color="#ec4899" delay={0.3} />
-              <CompatibilityBar label="Long-term Potential" score={longTerm} color="#ec4899" delay={0.4} />
+              <CompatibilityBar label="Long-term Potential" score={longTerm} color="#db2777" delay={0.4} />
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="p-3 rounded-xl bg-mode-partner/5 border border-mode-partner/20">
-          <p className="text-xs text-mode-partner mb-1">Cosmic Insight</p>
-          <p className="text-sm text-slate-300">
-            Your {currentUser.westernZodiac.element} energy harmonizes with {profile.name}&apos;s {profile.westernZodiac.element} nature.
-            As a Life Path {profile.lifePath} ({lp?.name}), {profile.name} brings {lp?.traits[0].toLowerCase()} energy to complement your analytical depth.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-white/5">
-          <span className="text-xl font-serif text-amber-accent">{profile.lifePath}</span>
-          <div>
-            <p className="text-sm font-medium">{lp?.name}</p>
-            <p className="text-xs text-slate-400">{lp?.description}</p>
-          </div>
-        </div>
-
-        <div className="space-y-3">
+        {/* Prompts */}
+        <div className="space-y-2.5">
           {profile.prompts.slice(0, 2).map((prompt, i) => (
-            <div key={i} className="p-3 rounded-xl bg-white/5">
-              <p className="text-xs text-slate-500 mb-1">{prompt.question}</p>
-              <p className="text-sm text-slate-200">{prompt.answer}</p>
+            <div key={i} className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5">
+              <p className="text-[10px] text-mode-partner font-semibold uppercase tracking-wider mb-1">{prompt.question}</p>
+              <p className="text-[13px] text-slate-200 leading-relaxed">{prompt.answer}</p>
             </div>
           ))}
         </div>
