@@ -189,6 +189,14 @@ export default function PersonalCard({ profile }: { profile: UserProfile }) {
                     ))}
                   </div>
                 </div>
+                <div>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-3 font-semibold">Incompatible Animals</p>
+                  <div className="flex flex-wrap gap-2">
+                    {animal.incompatibleAnimals.map((a) => (
+                      <span key={a} className="cosmic-tag bg-red-500/10 text-red-400 border border-red-500/20">{a}</span>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </motion.div>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, ChevronDown, ChevronUp, Heart, Sparkles } from "lucide-react";
-import { lifePathData, calculateCompatibility } from "@/lib/cosmic-calculations";
+import { lifePathData, calculateCompatibility, getCompatibilityLabel, isSoulmateMatch } from "@/lib/cosmic-calculations";
 import CompatibilityBar from "./CompatibilityBar";
 import type { UserProfile } from "@/types/profile";
 
@@ -19,6 +19,9 @@ export default function PartnerCard({ profile }: { profile: UserProfile }) {
   const [expanded, setExpanded] = useState(false);
   const compat = calculateCompatibility(currentUser, profile);
   const lp = lifePathData[profile.lifePath];
+
+  const compatLabel = getCompatibilityLabel(compat.overall);
+  const isSoulmate = isSoulmateMatch(currentUser, profile);
 
   const emotional = Math.min(99, compat.western + Math.floor(Math.random() * 6));
   const lifeGoals = Math.min(99, compat.lifePath + Math.floor(Math.random() * 5));
@@ -70,6 +73,18 @@ export default function PartnerCard({ profile }: { profile: UserProfile }) {
       </div>
 
       <div className="p-5 space-y-4">
+        {/* Compatibility Label */}
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold uppercase tracking-widest" style={{ color: compatLabel.color }}>
+            {compatLabel.label}
+          </span>
+          {isSoulmate && (
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-gradient-to-r from-mode-partner/20 to-mode-personal/20 border border-mode-partner/30 text-mode-partner pulse-glow">
+              Soulmate Pair
+            </span>
+          )}
+        </div>
+
         {/* Cosmic Insight */}
         <div className="p-4 rounded-2xl bg-gradient-to-r from-mode-partner/10 via-mode-partner/5 to-transparent border border-mode-partner/15">
           <div className="flex items-center gap-1.5 mb-2">

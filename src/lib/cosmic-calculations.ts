@@ -15,28 +15,107 @@ export const lifePathData: Record<number, LifePathInfo> = {
   33: { number: 33, name: "The Master Teacher", traits: ["Nurturing", "Wise", "Selfless", "Healing", "Devoted"], description: "Master number devoted to uplifting humanity" },
 };
 
-const lifePathCompat: Record<number, number[]> = {
-  1: [1, 3, 5, 7, 9],
-  2: [2, 4, 6, 8],
-  3: [1, 3, 5, 6, 9],
-  4: [2, 4, 6, 8],
-  5: [1, 3, 5, 7, 9],
-  6: [2, 3, 4, 6, 9],
-  7: [1, 5, 7],
-  8: [2, 4, 8],
-  9: [1, 3, 5, 6, 9],
-  11: [2, 4, 6, 11, 22],
-  22: [4, 6, 8, 11, 22],
-  33: [3, 6, 9, 33],
+// ─── Numerology Compatibility (from screenshot charts) ───
+// Perfect = 95, Good = 80, Neutral = 60, Hard = 35
+// Soulmate pairs get a 100 bonus tier
+
+// Soulmate pairs from the Soulmate Numerology chart
+const soulmatePairs: [number, number][] = [
+  [1, 9], [2, 8], [3, 9], [4, 7], [5, 6], [6, 9], [7, 8],
+];
+
+function isSoulmatePair(a: number, b: number): boolean {
+  return soulmatePairs.some(([x, y]) => (a === x && b === y) || (a === y && b === x));
+}
+
+// Numerology Name Compatibility Chart data
+const numerologyCompat: Record<number, { perfect: number[]; good: number[]; neutral: number[]; hard: number[] }> = {
+  1: { perfect: [1, 5, 7], good: [3, 9], neutral: [8], hard: [2, 4, 6] },
+  2: { perfect: [2, 4, 8], good: [3, 6], neutral: [9], hard: [1, 5, 7] },
+  3: { perfect: [3, 6, 9], good: [1, 2, 5], neutral: [], hard: [4, 7, 8] },
+  4: { perfect: [2, 4, 8], good: [6, 7], neutral: [], hard: [1, 3, 5, 9] },
+  5: { perfect: [1, 5, 7], good: [3, 9], neutral: [8], hard: [2, 4, 6] },
+  6: { perfect: [3, 6, 9], good: [2, 4, 8], neutral: [], hard: [1, 5, 7] },
+  7: { perfect: [1, 5, 7], good: [4], neutral: [9], hard: [2, 3, 6, 8] },
+  8: { perfect: [2, 4, 8], good: [6], neutral: [1, 5], hard: [3, 7, 9] },
+  9: { perfect: [3, 6, 9], good: [1, 5], neutral: [2, 7], hard: [4, 8] },
 };
 
-const elementCompat: Record<string, string[]> = {
-  Fire: ["Fire", "Air"],
-  Earth: ["Earth", "Water"],
-  Air: ["Air", "Fire"],
-  Water: ["Water", "Earth"],
+function getNumerologyScore(lp1: number, lp2: number): number {
+  // Reduce master numbers for compatibility lookup
+  const a = lp1 > 9 ? Math.floor(lp1 / 10) + (lp1 % 10) : lp1;
+  const b = lp2 > 9 ? Math.floor(lp2 / 10) + (lp2 % 10) : lp2;
+
+  if (isSoulmatePair(a, b)) return 100;
+
+  const entry = numerologyCompat[a];
+  if (!entry) return 60;
+
+  if (entry.perfect.includes(b)) return 95;
+  if (entry.good.includes(b)) return 80;
+  if (entry.neutral.includes(b)) return 60;
+  if (entry.hard.includes(b)) return 35;
+  return 55;
+}
+
+// ─── Western Zodiac Compatibility (from 12x12 grid screenshot) ───
+// Great Match (heart) = 95, Favorable (thumbs up) = 75, Not Favorable (X) = 30
+
+type ZodiacCompatLevel = "great" | "favorable" | "not_favorable";
+
+const westernZodiacCompat: Record<string, Record<string, ZodiacCompatLevel>> = {
+  Aries:       { Aries: "great", Leo: "great", Sagittarius: "great", Taurus: "not_favorable", Virgo: "favorable", Capricorn: "not_favorable", Gemini: "great", Libra: "great", Aquarius: "great", Cancer: "not_favorable", Scorpio: "not_favorable", Pisces: "favorable" },
+  Leo:         { Aries: "great", Leo: "great", Sagittarius: "great", Taurus: "favorable", Virgo: "not_favorable", Capricorn: "not_favorable", Gemini: "great", Libra: "great", Aquarius: "not_favorable", Cancer: "favorable", Scorpio: "favorable", Pisces: "not_favorable" },
+  Sagittarius: { Aries: "great", Leo: "great", Sagittarius: "great", Taurus: "not_favorable", Virgo: "not_favorable", Capricorn: "not_favorable", Gemini: "great", Libra: "great", Aquarius: "great", Cancer: "not_favorable", Scorpio: "favorable", Pisces: "favorable" },
+  Taurus:      { Aries: "not_favorable", Leo: "favorable", Sagittarius: "not_favorable", Taurus: "favorable", Virgo: "great", Capricorn: "great", Gemini: "not_favorable", Libra: "favorable", Aquarius: "not_favorable", Cancer: "great", Scorpio: "great", Pisces: "great" },
+  Virgo:       { Aries: "favorable", Leo: "not_favorable", Sagittarius: "not_favorable", Taurus: "great", Virgo: "favorable", Capricorn: "great", Gemini: "not_favorable", Libra: "not_favorable", Aquarius: "not_favorable", Cancer: "great", Scorpio: "great", Pisces: "favorable" },
+  Capricorn:   { Aries: "not_favorable", Leo: "not_favorable", Sagittarius: "not_favorable", Taurus: "great", Virgo: "great", Capricorn: "favorable", Gemini: "not_favorable", Libra: "not_favorable", Aquarius: "not_favorable", Cancer: "great", Scorpio: "great", Pisces: "great" },
+  Gemini:      { Aries: "great", Leo: "great", Sagittarius: "great", Taurus: "not_favorable", Virgo: "not_favorable", Capricorn: "not_favorable", Gemini: "favorable", Libra: "great", Aquarius: "great", Cancer: "not_favorable", Scorpio: "not_favorable", Pisces: "not_favorable" },
+  Libra:       { Aries: "favorable", Leo: "great", Sagittarius: "great", Taurus: "favorable", Virgo: "not_favorable", Capricorn: "not_favorable", Gemini: "great", Libra: "favorable", Aquarius: "great", Cancer: "not_favorable", Scorpio: "favorable", Pisces: "not_favorable" },
+  Aquarius:    { Aries: "great", Leo: "not_favorable", Sagittarius: "great", Taurus: "not_favorable", Virgo: "not_favorable", Capricorn: "not_favorable", Gemini: "great", Libra: "great", Aquarius: "favorable", Cancer: "not_favorable", Scorpio: "favorable", Pisces: "not_favorable" },
+  Cancer:      { Aries: "not_favorable", Leo: "favorable", Sagittarius: "not_favorable", Taurus: "great", Virgo: "great", Capricorn: "great", Gemini: "not_favorable", Libra: "not_favorable", Aquarius: "not_favorable", Cancer: "favorable", Scorpio: "great", Pisces: "great" },
+  Scorpio:     { Aries: "not_favorable", Leo: "favorable", Sagittarius: "favorable", Taurus: "great", Virgo: "great", Capricorn: "great", Gemini: "not_favorable", Libra: "favorable", Aquarius: "favorable", Cancer: "great", Scorpio: "favorable", Pisces: "great" },
+  Pisces:      { Aries: "favorable", Leo: "not_favorable", Sagittarius: "favorable", Taurus: "great", Virgo: "favorable", Capricorn: "great", Gemini: "not_favorable", Libra: "not_favorable", Aquarius: "not_favorable", Cancer: "great", Scorpio: "great", Pisces: "favorable" },
 };
 
+function getWesternScore(sign1: string, sign2: string): number {
+  const level = westernZodiacCompat[sign1]?.[sign2];
+  if (level === "great") return 95;
+  if (level === "favorable") return 75;
+  if (level === "not_favorable") return 30;
+  return 55;
+}
+
+// ─── Chinese Zodiac Animal Compatibility (from screenshot) ───
+// Most Compatible = 95, Symmetrically Compatible = 80, Neutral = 55, Incompatible = 30, Most Incompatible = 15
+
+const chineseAnimalCompat: Record<string, { most: string[]; symmetric: string[]; incompatible: string[]; mostIncompatible: string[] }> = {
+  Rat:     { most: ["Ox", "Pig"],         symmetric: ["Monkey", "Dragon"],    incompatible: ["Horse"],           mostIncompatible: ["Rabbit", "Rooster"] },
+  Ox:      { most: ["Rat", "Tiger"],      symmetric: ["Snake", "Rooster"],    incompatible: ["Goat"],            mostIncompatible: ["Dragon", "Dog"] },
+  Tiger:   { most: ["Ox", "Rabbit"],      symmetric: ["Horse", "Dog"],        incompatible: ["Monkey"],          mostIncompatible: ["Snake", "Pig"] },
+  Rabbit:  { most: ["Tiger", "Dragon"],   symmetric: ["Pig", "Goat"],         incompatible: ["Rooster"],         mostIncompatible: ["Rat", "Horse"] },
+  Dragon:  { most: ["Rabbit", "Snake"],   symmetric: ["Monkey", "Rat"],       incompatible: ["Dog"],             mostIncompatible: ["Ox", "Goat"] },
+  Snake:   { most: ["Dragon", "Horse"],   symmetric: ["Rooster", "Ox"],       incompatible: ["Pig"],             mostIncompatible: ["Tiger", "Monkey"] },
+  Horse:   { most: ["Snake", "Goat"],     symmetric: ["Tiger", "Dog"],        incompatible: ["Rat"],             mostIncompatible: ["Rabbit", "Rooster"] },
+  Goat:    { most: ["Horse", "Monkey"],   symmetric: ["Pig", "Rabbit"],       incompatible: ["Ox"],              mostIncompatible: ["Dragon", "Dog"] },
+  Monkey:  { most: ["Goat", "Rooster"],   symmetric: ["Rat", "Dragon"],       incompatible: ["Tiger"],           mostIncompatible: ["Snake", "Pig"] },
+  Rooster: { most: ["Monkey", "Dog"],     symmetric: ["Snake", "Ox"],         incompatible: ["Rabbit"],          mostIncompatible: ["Horse", "Rat"] },
+  Dog:     { most: ["Rooster", "Pig"],    symmetric: ["Tiger", "Horse"],      incompatible: ["Dragon"],          mostIncompatible: ["Goat", "Ox"] },
+  Pig:     { most: ["Rat", "Dog"],        symmetric: ["Rabbit", "Goat"],      incompatible: ["Snake"],           mostIncompatible: ["Tiger", "Monkey"] },
+};
+
+function getChineseAnimalScore(animal1: string, animal2: string): number {
+  const entry = chineseAnimalCompat[animal1];
+  if (!entry) return 55;
+
+  if (entry.most.includes(animal2)) return 95;
+  if (entry.symmetric.includes(animal2)) return 80;
+  if (entry.mostIncompatible.includes(animal2)) return 15;
+  if (entry.incompatible.includes(animal2)) return 30;
+  return 55; // neutral
+}
+
+// ─── Chinese Element Compatibility (Five Elements cycle) ───
 const chineseElementCompat: Record<string, string[]> = {
   Wood: ["Water", "Wood"],
   Fire: ["Wood", "Fire"],
@@ -45,49 +124,80 @@ const chineseElementCompat: Record<string, string[]> = {
   Water: ["Metal", "Water"],
 };
 
+function getChineseElementScore(el1: string, el2: string): number {
+  return chineseElementCompat[el1]?.includes(el2) ? 85 : 50;
+}
+
+// ─── Overall Compatibility Calculation ───
 export function calculateCompatibility(user1: UserProfile, user2: UserProfile): CompatibilityResult {
-  const lifePathScore = lifePathCompat[user1.lifePath]?.includes(user2.lifePath) ? 90 : 60;
-  const westernScore = elementCompat[user1.westernZodiac.element]?.includes(user2.westernZodiac.element) ? 85 : 55;
-  const chineseScore = chineseElementCompat[user1.chineseZodiac.element]?.includes(user2.chineseZodiac.element) ? 88 : 58;
+  const lifePathScore = getNumerologyScore(user1.lifePath, user2.lifePath);
+  const westernScore = getWesternScore(user1.westernZodiac.sign, user2.westernZodiac.sign);
+
+  // Chinese score blends animal compatibility (70%) and element compatibility (30%)
+  const animalScore = getChineseAnimalScore(user1.chineseZodiac.animal, user2.chineseZodiac.animal);
+  const elementScore = getChineseElementScore(user1.chineseZodiac.element, user2.chineseZodiac.element);
+  const chineseScore = Math.round(animalScore * 0.7 + elementScore * 0.3);
+
+  // Weighted overall: Numerology 35%, Western 35%, Chinese 30%
+  const overall = Math.round(lifePathScore * 0.35 + westernScore * 0.35 + chineseScore * 0.3);
 
   return {
-    overall: Math.round((lifePathScore + westernScore + chineseScore) / 3),
+    overall,
     lifePath: lifePathScore,
     western: westernScore,
     chinese: chineseScore,
   };
 }
 
+// ─── Compatibility Label Helpers ───
+export function getCompatibilityLabel(score: number): { label: string; color: string } {
+  if (score >= 90) return { label: "Soulmate Connection", color: "#ec4899" };
+  if (score >= 80) return { label: "Excellent Match", color: "#a78bfa" };
+  if (score >= 70) return { label: "Great Potential", color: "#10b981" };
+  if (score >= 55) return { label: "Worth Exploring", color: "#3b82f6" };
+  if (score >= 40) return { label: "Challenging", color: "#f97316" };
+  return { label: "Difficult Match", color: "#ef4444" };
+}
+
+export function isSoulmateMatch(user1: UserProfile, user2: UserProfile): boolean {
+  const a = user1.lifePath > 9 ? Math.floor(user1.lifePath / 10) + (user1.lifePath % 10) : user1.lifePath;
+  const b = user2.lifePath > 9 ? Math.floor(user2.lifePath / 10) + (user2.lifePath % 10) : user2.lifePath;
+  return isSoulmatePair(a, b);
+}
+
+// ─── Zodiac Descriptions ───
 export const zodiacDescriptions: Record<string, { traits: string; ruler: string; compatibleSigns: string[] }> = {
   Aries: { traits: "Bold, ambitious, and confident. A natural-born leader.", ruler: "Mars", compatibleSigns: ["Leo", "Sagittarius", "Gemini", "Aquarius"] },
-  Taurus: { traits: "Reliable, patient, and devoted. Grounded and sensual.", ruler: "Venus", compatibleSigns: ["Virgo", "Capricorn", "Cancer", "Pisces"] },
-  Gemini: { traits: "Versatile, curious, and expressive. Quick-witted communicator.", ruler: "Mercury", compatibleSigns: ["Libra", "Aquarius", "Aries", "Leo"] },
-  Cancer: { traits: "Intuitive, nurturing, and protective. Deeply emotional.", ruler: "Moon", compatibleSigns: ["Scorpio", "Pisces", "Taurus", "Virgo"] },
+  Taurus: { traits: "Reliable, patient, and devoted. Grounded and sensual.", ruler: "Venus", compatibleSigns: ["Virgo", "Capricorn", "Cancer", "Pisces", "Scorpio"] },
+  Gemini: { traits: "Versatile, curious, and expressive. Quick-witted communicator.", ruler: "Mercury", compatibleSigns: ["Libra", "Aquarius", "Aries", "Leo", "Sagittarius"] },
+  Cancer: { traits: "Intuitive, nurturing, and protective. Deeply emotional.", ruler: "Moon", compatibleSigns: ["Scorpio", "Pisces", "Taurus", "Virgo", "Capricorn"] },
   Leo: { traits: "Dramatic, creative, and confident. Warm-hearted leader.", ruler: "Sun", compatibleSigns: ["Aries", "Sagittarius", "Gemini", "Libra"] },
   Virgo: { traits: "Analytical, practical, and thoughtful. Detail-oriented perfectionist.", ruler: "Mercury", compatibleSigns: ["Taurus", "Capricorn", "Cancer", "Scorpio"] },
   Libra: { traits: "Diplomatic, gracious, and fair. Seeks harmony and balance.", ruler: "Venus", compatibleSigns: ["Gemini", "Aquarius", "Leo", "Sagittarius"] },
-  Scorpio: { traits: "Passionate, resourceful, and brave. Intensely magnetic.", ruler: "Pluto", compatibleSigns: ["Cancer", "Pisces", "Virgo", "Capricorn"] },
-  Sagittarius: { traits: "Adventurous, optimistic, and philosophical. Free-spirited explorer.", ruler: "Jupiter", compatibleSigns: ["Aries", "Leo", "Libra", "Aquarius"] },
-  Capricorn: { traits: "Disciplined, responsible, and ambitious. Master of self-control.", ruler: "Saturn", compatibleSigns: ["Taurus", "Virgo", "Scorpio", "Pisces"] },
+  Scorpio: { traits: "Passionate, resourceful, and brave. Intensely magnetic.", ruler: "Pluto", compatibleSigns: ["Cancer", "Pisces", "Taurus", "Virgo", "Capricorn"] },
+  Sagittarius: { traits: "Adventurous, optimistic, and philosophical. Free-spirited explorer.", ruler: "Jupiter", compatibleSigns: ["Aries", "Leo", "Gemini", "Libra", "Aquarius"] },
+  Capricorn: { traits: "Disciplined, responsible, and ambitious. Master of self-control.", ruler: "Saturn", compatibleSigns: ["Taurus", "Virgo", "Cancer", "Scorpio", "Pisces"] },
   Aquarius: { traits: "Progressive, original, and independent. Humanitarian visionary.", ruler: "Uranus", compatibleSigns: ["Gemini", "Libra", "Aries", "Sagittarius"] },
   Pisces: { traits: "Compassionate, artistic, and intuitive. Mystical dreamer.", ruler: "Neptune", compatibleSigns: ["Cancer", "Scorpio", "Taurus", "Capricorn"] },
 };
 
-export const chineseAnimalDescriptions: Record<string, { traits: string; luckyNumbers: number[]; luckyColors: string[]; compatibleAnimals: string[] }> = {
-  Rat: { traits: "Quick-witted, resourceful, and versatile", luckyNumbers: [2, 3], luckyColors: ["Blue", "Gold", "Green"], compatibleAnimals: ["Dragon", "Monkey", "Ox"] },
-  Ox: { traits: "Diligent, dependable, strong, and determined", luckyNumbers: [1, 4], luckyColors: ["White", "Yellow", "Green"], compatibleAnimals: ["Rat", "Snake", "Rooster"] },
-  Tiger: { traits: "Brave, competitive, unpredictable, and confident", luckyNumbers: [1, 3, 4], luckyColors: ["Blue", "Gray", "Orange"], compatibleAnimals: ["Dragon", "Horse", "Pig"] },
-  Rabbit: { traits: "Quiet, elegant, kind, and responsible", luckyNumbers: [3, 4, 6], luckyColors: ["Red", "Pink", "Purple"], compatibleAnimals: ["Goat", "Monkey", "Dog", "Pig"] },
-  Dragon: { traits: "Confident, intelligent, enthusiastic, and ambitious", luckyNumbers: [1, 6, 7], luckyColors: ["Gold", "Silver", "Gray"], compatibleAnimals: ["Rooster", "Rat", "Monkey"] },
-  Snake: { traits: "Enigmatic, intelligent, and wise", luckyNumbers: [2, 8, 9], luckyColors: ["Black", "Red", "Yellow"], compatibleAnimals: ["Dragon", "Rooster", "Ox"] },
-  Horse: { traits: "Animated, active, and energetic", luckyNumbers: [2, 3, 7], luckyColors: ["Yellow", "Red", "Green"], compatibleAnimals: ["Tiger", "Goat", "Rabbit"] },
-  Goat: { traits: "Calm, gentle, and sympathetic", luckyNumbers: [2, 7], luckyColors: ["Brown", "Red", "Purple"], compatibleAnimals: ["Rabbit", "Horse", "Pig"] },
-  Monkey: { traits: "Sharp, smart, and curious", luckyNumbers: [4, 9], luckyColors: ["White", "Blue", "Gold"], compatibleAnimals: ["Ox", "Rabbit", "Dragon"] },
-  Rooster: { traits: "Observant, hardworking, and courageous", luckyNumbers: [5, 7, 8], luckyColors: ["Gold", "Brown", "Yellow"], compatibleAnimals: ["Ox", "Snake", "Dragon"] },
-  Dog: { traits: "Loyal, honest, and amiable", luckyNumbers: [3, 4, 9], luckyColors: ["Red", "Green", "Purple"], compatibleAnimals: ["Rabbit", "Tiger", "Horse"] },
-  Pig: { traits: "Compassionate, generous, and diligent", luckyNumbers: [2, 5, 8], luckyColors: ["Yellow", "Gray", "Brown"], compatibleAnimals: ["Tiger", "Rabbit", "Goat"] },
+// ─── Chinese Animal Descriptions (updated compatible animals from screenshot) ───
+export const chineseAnimalDescriptions: Record<string, { traits: string; luckyNumbers: number[]; luckyColors: string[]; compatibleAnimals: string[]; incompatibleAnimals: string[] }> = {
+  Rat:     { traits: "Quick-witted, resourceful, and versatile", luckyNumbers: [2, 3], luckyColors: ["Blue", "Gold", "Green"], compatibleAnimals: ["Ox", "Pig", "Monkey", "Dragon"], incompatibleAnimals: ["Horse", "Rabbit", "Rooster"] },
+  Ox:      { traits: "Diligent, dependable, strong, and determined", luckyNumbers: [1, 4], luckyColors: ["White", "Yellow", "Green"], compatibleAnimals: ["Rat", "Tiger", "Snake", "Rooster"], incompatibleAnimals: ["Goat", "Dragon", "Dog"] },
+  Tiger:   { traits: "Brave, competitive, unpredictable, and confident", luckyNumbers: [1, 3, 4], luckyColors: ["Blue", "Gray", "Orange"], compatibleAnimals: ["Ox", "Rabbit", "Horse", "Dog"], incompatibleAnimals: ["Monkey", "Snake", "Pig"] },
+  Rabbit:  { traits: "Quiet, elegant, kind, and responsible", luckyNumbers: [3, 4, 6], luckyColors: ["Red", "Pink", "Purple"], compatibleAnimals: ["Tiger", "Dragon", "Pig", "Goat"], incompatibleAnimals: ["Rooster", "Rat", "Horse"] },
+  Dragon:  { traits: "Confident, intelligent, enthusiastic, and ambitious", luckyNumbers: [1, 6, 7], luckyColors: ["Gold", "Silver", "Gray"], compatibleAnimals: ["Rabbit", "Snake", "Monkey", "Rat"], incompatibleAnimals: ["Dog", "Ox", "Goat"] },
+  Snake:   { traits: "Enigmatic, intelligent, and wise", luckyNumbers: [2, 8, 9], luckyColors: ["Black", "Red", "Yellow"], compatibleAnimals: ["Dragon", "Horse", "Rooster", "Ox"], incompatibleAnimals: ["Pig", "Tiger", "Monkey"] },
+  Horse:   { traits: "Animated, active, and energetic", luckyNumbers: [2, 3, 7], luckyColors: ["Yellow", "Red", "Green"], compatibleAnimals: ["Snake", "Goat", "Tiger", "Dog"], incompatibleAnimals: ["Rat", "Rabbit", "Rooster"] },
+  Goat:    { traits: "Calm, gentle, and sympathetic", luckyNumbers: [2, 7], luckyColors: ["Brown", "Red", "Purple"], compatibleAnimals: ["Horse", "Monkey", "Pig", "Rabbit"], incompatibleAnimals: ["Ox", "Dragon", "Dog"] },
+  Monkey:  { traits: "Sharp, smart, and curious", luckyNumbers: [4, 9], luckyColors: ["White", "Blue", "Gold"], compatibleAnimals: ["Goat", "Rooster", "Rat", "Dragon"], incompatibleAnimals: ["Tiger", "Snake", "Pig"] },
+  Rooster: { traits: "Observant, hardworking, and courageous", luckyNumbers: [5, 7, 8], luckyColors: ["Gold", "Brown", "Yellow"], compatibleAnimals: ["Monkey", "Dog", "Snake", "Ox"], incompatibleAnimals: ["Rabbit", "Horse", "Rat"] },
+  Dog:     { traits: "Loyal, honest, and amiable", luckyNumbers: [3, 4, 9], luckyColors: ["Red", "Green", "Purple"], compatibleAnimals: ["Rooster", "Pig", "Tiger", "Horse"], incompatibleAnimals: ["Dragon", "Goat", "Ox"] },
+  Pig:     { traits: "Compassionate, generous, and diligent", luckyNumbers: [2, 5, 8], luckyColors: ["Yellow", "Gray", "Brown"], compatibleAnimals: ["Rat", "Dog", "Rabbit", "Goat"], incompatibleAnimals: ["Snake", "Tiger", "Monkey"] },
 };
 
+// ─── Element Descriptions ───
 export const elementDescriptions: Record<string, string> = {
   Fire: "Passionate, dynamic, and temperamental. Fire signs are inspired by action and desire.",
   Earth: "Grounded, practical, and reliable. Earth signs build stable foundations for others.",
