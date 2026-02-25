@@ -63,7 +63,7 @@ export default function SignInButtons() {
     setValidating(true);
     setError("");
     try {
-      const res = await fetch("/api/auth/email/validate", {
+      const res = await fetch("/api/email/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim() }),
