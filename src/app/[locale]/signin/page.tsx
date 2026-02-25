@@ -8,14 +8,13 @@ import { Sparkles, AlertCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import CosmicBackground from "@/components/CosmicBackground";
 import SignInButtons from "@/components/SignInButtons";
-import PhoneSignIn from "@/components/PhoneSignIn";
 
 export default function SignInPage() {
   const t = useTranslations("auth");
   const tc = useTranslations("common");
   const searchParams = useSearchParams();
   const authError = searchParams.get("error");
-  const [view, setView] = useState<"landing" | "auth" | "phone">("landing");
+  const [view, setView] = useState<"landing" | "auth">("landing");
 
   // If there's an auth error, jump straight to the auth view
   useEffect(() => {
@@ -46,7 +45,7 @@ export default function SignInPage() {
             </h1>
             <Sparkles size={22} className="text-violet-400" />
           </div>
-          <p className="text-xs text-slate-400 tracking-[0.25em] uppercase">
+          <p className="text-xs text-slate-400 tracking-[0.25em] uppercase text-center">
             {tc("tagline")}
           </p>
         </motion.div>
@@ -103,7 +102,7 @@ export default function SignInPage() {
                   <span>{t("authError")}</span>
                 </div>
               )}
-              <SignInButtons onPhoneClick={() => setView("phone")} />
+              <SignInButtons />
 
               {/* Back link */}
               <button
@@ -112,23 +111,8 @@ export default function SignInPage() {
               >
                 {tc("back")}
               </button>
-
-              {/* Dev bypass */}
-              {process.env.NODE_ENV === "development" && (
-                <button
-                  onClick={async () => {
-                    const res = await fetch("/api/auth/dev-bypass", { method: "POST" });
-                    if (res.ok) window.location.href = "/";
-                  }}
-                  className="text-[10px] text-white/20 hover:text-white/40 transition-colors mt-4"
-                >
-                  [DEV] Skip auth
-                </button>
-              )}
             </motion.div>
-          ) : (
-            <PhoneSignIn onBack={() => setView("auth")} />
-          )}
+          ) : null}
         </AnimatePresence>
       </div>
     </main>

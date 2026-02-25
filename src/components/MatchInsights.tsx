@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Users, Crown, Star } from "lucide-react";
 import { calculateAllCompatibility, getCompatibilityLabel } from "@/lib/cosmic-calculations";
+import { useTranslations } from "next-intl";
 import type { MatchInsightsData } from "@/lib/cosmic-calculations";
 import type { UserProfile } from "@/types/profile";
 
@@ -14,14 +15,15 @@ interface MatchInsightsProps {
 }
 
 const tierConfig = [
-  { key: "soulmate" as const, label: "Soulmate", color: "#ec4899" },
-  { key: "excellent" as const, label: "Excellent", color: "#a78bfa" },
-  { key: "great" as const, label: "Great", color: "#10b981" },
-  { key: "worthExploring" as const, label: "Exploring", color: "#3b82f6" },
-  { key: "challenging" as const, label: "Challenging", color: "#f97316" },
+  { key: "soulmate" as const, labelKey: "soulmate", color: "#ec4899" },
+  { key: "excellent" as const, labelKey: "excellent", color: "#a78bfa" },
+  { key: "great" as const, labelKey: "great", color: "#10b981" },
+  { key: "worthExploring" as const, labelKey: "exploring", color: "#3b82f6" },
+  { key: "challenging" as const, labelKey: "challenging", color: "#f97316" },
 ];
 
 export default function MatchInsights({ profile, allProfiles, accentColor = "#a78bfa", compact = false }: MatchInsightsProps) {
+  const t = useTranslations('compatibility');
   const data: MatchInsightsData = calculateAllCompatibility(profile, allProfiles);
   const totalOthers = allProfiles.filter((p) => p.id !== profile.id).length;
 
@@ -35,7 +37,7 @@ export default function MatchInsights({ profile, allProfiles, accentColor = "#a7
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users size={13} style={{ color: accentColor }} />
-            <p className="text-[10px] uppercase tracking-widest font-semibold text-slate-500">Community Match</p>
+            <p className="text-[10px] uppercase tracking-widest font-semibold text-slate-500">{t('communityMatch')}</p>
           </div>
           {data.rank && (
             <span
@@ -51,7 +53,7 @@ export default function MatchInsights({ profile, allProfiles, accentColor = "#a7
           {/* Average score */}
           <div className="flex items-baseline gap-1">
             <span className="text-2xl font-bold" style={{ color: compatLabel.color }}>{data.averageScore}%</span>
-            <span className="text-[10px] text-slate-500">avg</span>
+            <span className="text-[10px] text-slate-500">{t('avg')}</span>
           </div>
 
           {/* Top matches mini */}
@@ -84,7 +86,7 @@ export default function MatchInsights({ profile, allProfiles, accentColor = "#a7
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 className="rounded-full"
                 style={{ backgroundColor: tier.color }}
-                title={`${tier.label}: ${count}`}
+                title={`${t(tier.labelKey)}: ${count}`}
               />
             );
           })}
@@ -99,7 +101,7 @@ export default function MatchInsights({ profile, allProfiles, accentColor = "#a7
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Users size={13} style={{ color: accentColor }} />
-          <p className="text-[10px] uppercase tracking-widest font-semibold text-slate-500">Community Compatibility</p>
+          <p className="text-[10px] uppercase tracking-widest font-semibold text-slate-500">{t('communityCompatibility')}</p>
         </div>
         {data.rank && (
           <span
@@ -115,7 +117,7 @@ export default function MatchInsights({ profile, allProfiles, accentColor = "#a7
       {/* Average score */}
       <div className="text-center py-2">
         <span className="text-4xl font-bold" style={{ color: compatLabel.color }}>{data.averageScore}%</span>
-        <p className="text-xs text-slate-400 mt-1">average match across {totalOthers} profiles</p>
+        <p className="text-xs text-slate-400 mt-1">{t('averageMatch', { count: totalOthers })}</p>
         <p className="text-[10px] font-semibold mt-0.5" style={{ color: compatLabel.color }}>{compatLabel.label}</p>
       </div>
 
@@ -123,7 +125,7 @@ export default function MatchInsights({ profile, allProfiles, accentColor = "#a7
       <div>
         <div className="flex items-center gap-1.5 mb-2.5">
           <Star size={11} style={{ color: accentColor }} />
-          <p className="text-[10px] uppercase tracking-widest font-semibold text-slate-500">Top Matches</p>
+          <p className="text-[10px] uppercase tracking-widest font-semibold text-slate-500">{t('topMatches')}</p>
         </div>
         <div className="space-y-2">
           {data.bestMatches.map((m, i) => {
@@ -158,14 +160,14 @@ export default function MatchInsights({ profile, allProfiles, accentColor = "#a7
 
       {/* Tier distribution */}
       <div>
-        <p className="text-[10px] uppercase tracking-widest font-semibold text-slate-500 mb-2.5">Match Distribution</p>
+        <p className="text-[10px] uppercase tracking-widest font-semibold text-slate-500 mb-2.5">{t('matchDistribution')}</p>
         <div className="space-y-1.5">
           {tierConfig.map((tier) => {
             const count = data.distribution[tier.key];
             const pct = totalOthers > 0 ? (count / totalOthers) * 100 : 0;
             return (
               <div key={tier.key} className="flex items-center gap-2">
-                <span className="text-[10px] text-slate-400 w-16 text-right">{tier.label}</span>
+                <span className="text-[10px] text-slate-400 w-16 text-right">{t(tier.labelKey)}</span>
                 <div className="flex-1 h-3 rounded-full bg-white/5 overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}

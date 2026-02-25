@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="50%" r="40%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Full square black background (required for maskable) -->
+  <rect width="512" height="512" fill="#000000"/>
+
+  <!-- Subtle violet radial glow -->
+  <circle cx="256" cy="256" r="154" fill="url(#glow)"/>
+
+  <!-- All content within 80% safe zone: 51.2px inset each side -->
+  <!-- Safe area: 51.2 to 460.8 (409.6px usable), center at 256 -->
+
+  <!-- 4-point sparkle/star in violet — scaled to fit safe zone -->
+  <!-- Main vertical spike -->
+  <path d="M256 100 L269 210 L256 210 L243 210 Z" fill="#8b5cf6" opacity="0.9"/>
+  <path d="M256 412 L243 302 L256 302 L269 302 Z" fill="#8b5cf6" opacity="0.9"/>
+  <!-- Main horizontal spike -->
+  <path d="M100 256 L210 243 L210 256 L210 269 Z" fill="#8b5cf6" opacity="0.9"/>
+  <path d="M412 256 L302 269 L302 256 L302 243 Z" fill="#8b5cf6" opacity="0.9"/>
+
+  <!-- Diagonal smaller spikes -->
+  <path d="M146 146 L218 218 L210 226 L202 218 Z" fill="#8b5cf6" opacity="0.55"/>
+  <path d="M366 146 L294 218 L302 226 L310 218 Z" fill="#8b5cf6" opacity="0.55"/>
+  <path d="M146 366 L218 294 L210 286 L202 294 Z" fill="#8b5cf6" opacity="0.55"/>
+  <path d="M366 366 L294 294 L302 286 L310 294 Z" fill="#8b5cf6" opacity="0.55"/>
+
+  <!-- Center bright dot -->
+  <circle cx="256" cy="256" r="30" fill="#8b5cf6" opacity="0.85"/>
+  <circle cx="256" cy="256" r="17" fill="#a78bfa"/>
+
+  <!-- Letter "a" in white, thin weight, centered -->
+  <text x="256" y="273" text-anchor="middle" dominant-baseline="central"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="60" font-weight="300" fill="#ffffff" letter-spacing="-1.5">a</text>
+</svg>

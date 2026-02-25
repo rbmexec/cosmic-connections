@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Black circle background -->
+  <circle cx="256" cy="256" r="256" fill="#000000"/>
+
+  <!-- Subtle violet radial glow behind the sparkle -->
+  <circle cx="256" cy="256" r="192" fill="url(#glow)"/>
+
+  <!-- 4-point sparkle/star in violet -->
+  <!-- Main vertical spike -->
+  <path d="M256 75 L272 213 L256 213 L240 213 Z" fill="#8b5cf6" opacity="0.9"/>
+  <path d="M256 437 L240 299 L256 299 L272 299 Z" fill="#8b5cf6" opacity="0.9"/>
+  <!-- Main horizontal spike -->
+  <path d="M75 256 L213 240 L213 256 L213 272 Z" fill="#8b5cf6" opacity="0.9"/>
+  <path d="M437 256 L299 272 L299 256 L299 240 Z" fill="#8b5cf6" opacity="0.9"/>
+
+  <!-- Diagonal smaller spikes -->
+  <path d="M138 138 L224 224 L213 235 L202 224 Z" fill="#8b5cf6" opacity="0.55"/>
+  <path d="M374 138 L288 224 L299 235 L310 224 Z" fill="#8b5cf6" opacity="0.55"/>
+  <path d="M138 374 L224 288 L213 277 L202 288 Z" fill="#8b5cf6" opacity="0.55"/>
+  <path d="M374 374 L288 288 L299 277 L310 288 Z" fill="#8b5cf6" opacity="0.55"/>
+
+  <!-- Center bright dot -->
+  <circle cx="256" cy="256" r="37" fill="#8b5cf6" opacity="0.85"/>
+  <circle cx="256" cy="256" r="21" fill="#a78bfa"/>
+
+  <!-- Letter "a" in white, thin weight, centered -->
+  <text x="256" y="275" text-anchor="middle" dominant-baseline="central"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="75" font-weight="300" fill="#ffffff" letter-spacing="-1.5">a</text>
+</svg>

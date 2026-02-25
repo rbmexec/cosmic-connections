@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Black circle background -->
+  <circle cx="96" cy="96" r="96" fill="#000000"/>
+
+  <!-- Subtle violet radial glow behind the sparkle -->
+  <circle cx="96" cy="96" r="72" fill="url(#glow)"/>
+
+  <!-- 4-point sparkle/star in violet -->
+  <!-- Main vertical spike -->
+  <path d="M96 28 L102 80 L96 80 L90 80 Z" fill="#8b5cf6" opacity="0.9"/>
+  <path d="M96 164 L90 112 L96 112 L102 112 Z" fill="#8b5cf6" opacity="0.9"/>
+  <!-- Main horizontal spike -->
+  <path d="M28 96 L80 90 L80 96 L80 102 Z" fill="#8b5cf6" opacity="0.9"/>
+  <path d="M164 96 L112 102 L112 96 L112 90 Z" fill="#8b5cf6" opacity="0.9"/>
+
+  <!-- Diagonal smaller spikes -->
+  <path d="M52 52 L84 84 L80 88 L76 84 Z" fill="#8b5cf6" opacity="0.55"/>
+  <path d="M140 52 L108 84 L112 88 L116 84 Z" fill="#8b5cf6" opacity="0.55"/>
+  <path d="M52 140 L84 108 L80 104 L76 108 Z" fill="#8b5cf6" opacity="0.55"/>
+  <path d="M140 140 L108 108 L112 104 L116 108 Z" fill="#8b5cf6" opacity="0.55"/>
+
+  <!-- Center bright dot -->
+  <circle cx="96" cy="96" r="14" fill="#8b5cf6" opacity="0.85"/>
+  <circle cx="96" cy="96" r="8" fill="#a78bfa"/>
+
+  <!-- Letter "a" in white, thin weight, centered -->
+  <text x="96" y="103" text-anchor="middle" dominant-baseline="central"
+        font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+        font-size="28" font-weight="300" fill="#ffffff" letter-spacing="-0.5">a</text>
+</svg>

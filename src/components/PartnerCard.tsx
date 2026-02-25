@@ -1,11 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, ChevronDown, ChevronUp, Heart, Sparkles } from "lucide-react";
+import { useTranslations } from 'next-intl';
 import { lifePathData, calculateCompatibility, getCompatibilityLabel, isSoulmateMatch } from "@/lib/cosmic-calculations";
 import CompatibilityBar from "./CompatibilityBar";
 import MatchInsights from "./MatchInsights";
+import CosmicInfo from "@/components/CosmicInfo";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import type { UserProfile } from "@/types/profile";
 
 const defaultUser: UserProfile = {
@@ -17,6 +21,8 @@ const defaultUser: UserProfile = {
 };
 
 export default function PartnerCard({ profile, allProfiles = [], currentUser }: { profile: UserProfile; allProfiles?: UserProfile[]; currentUser?: UserProfile }) {
+  const t = useTranslations('compatibility');
+  const tc = useTranslations('common');
   const user = currentUser ?? defaultUser;
   const [expanded, setExpanded] = useState(false);
   const compat = calculateCompatibility(user, profile);
@@ -39,7 +45,7 @@ export default function PartnerCard({ profile, allProfiles = [], currentUser }: 
     >
       {/* Photo */}
       <div className="relative h-64">
-        <img src={profile.photo} alt={profile.name} className="w-full h-full object-cover" />
+        <Image src={profile.photo} alt={profile.name} fill className="object-cover" />
         <div className="absolute inset-0 photo-gradient" />
 
         {/* Compatibility Ring */}
@@ -63,8 +69,8 @@ export default function PartnerCard({ profile, allProfiles = [], currentUser }: 
 
         {/* Profile Info */}
         <div className="absolute bottom-4 left-5 right-5">
-          <h2 className="text-[28px] font-bold tracking-tight">
-            {profile.name}<span className="text-slate-300 font-light ml-2">{profile.age}</span>
+          <h2 className="text-[28px] font-bold tracking-tight flex items-center gap-1.5">
+            {profile.name}{profile.isVerified && <VerifiedBadge size="md" />}<span className="text-slate-300 font-light ml-2">{profile.age}</span>
           </h2>
           <p className="text-sm text-slate-200">{profile.occupation}</p>
           <div className="flex items-center gap-1.5 text-slate-400 text-xs mt-0.5">
@@ -82,7 +88,7 @@ export default function PartnerCard({ profile, allProfiles = [], currentUser }: 
           </span>
           {isSoulmate && (
             <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-gradient-to-r from-mode-partner/20 to-mode-personal/20 border border-mode-partner/30 text-mode-partner pulse-glow">
-              Soulmate Pair
+              {t('soulmateLabel')}
             </span>
           )}
         </div>
@@ -91,28 +97,41 @@ export default function PartnerCard({ profile, allProfiles = [], currentUser }: 
         <div className="p-4 rounded-2xl bg-gradient-to-r from-mode-partner/10 via-mode-partner/5 to-transparent border border-mode-partner/15">
           <div className="flex items-center gap-1.5 mb-2">
             <Sparkles size={12} className="text-mode-partner" />
-            <p className="text-[10px] text-mode-partner font-bold uppercase tracking-widest">Cosmic Insight</p>
+            <p className="text-[10px] text-mode-partner font-bold uppercase tracking-widest">{tc('cosmicInsight')}</p>
           </div>
           <p className="text-[13px] text-slate-300 leading-relaxed">
-            Your {user.westernZodiac.element} energy harmonizes beautifully with {profile.name}&apos;s {profile.westernZodiac.element} nature.
-            As a Life Path {profile.lifePath} ({lp?.name}), they bring {lp?.traits[0].toLowerCase()} and {lp?.traits[1].toLowerCase()} energy to complement your depth.
+            {t('cosmicInsightPartner', {
+              userElement: user.westernZodiac.element,
+              name: profile.name,
+              profileElement: profile.westernZodiac.element,
+              lifePath: profile.lifePath,
+              lpName: lp?.name,
+              trait1: lp?.traits[0].toLowerCase(),
+              trait2: lp?.traits[1].toLowerCase(),
+            })}
           </p>
         </div>
 
         {/* Cosmic Trio */}
         <div className="flex gap-2">
-          <div className="flex-1 p-3 rounded-xl bg-amber-accent/5 border border-amber-accent/10 text-center">
-            <span className="text-lg font-bold text-gradient-gold">{profile.lifePath}</span>
-            <p className="text-[9px] text-slate-500 uppercase tracking-wider mt-0.5">{lp?.name}</p>
-          </div>
-          <div className="flex-1 p-3 rounded-xl bg-mode-personal/5 border border-mode-personal/10 text-center">
-            <span className="text-lg">{profile.westernZodiac.symbol}</span>
-            <p className="text-[9px] text-slate-500 uppercase tracking-wider mt-0.5">{profile.westernZodiac.sign}</p>
-          </div>
-          <div className="flex-1 p-3 rounded-xl bg-green-500/5 border border-green-500/10 text-center">
-            <span className="text-lg">{profile.chineseZodiac.symbol}</span>
-            <p className="text-[9px] text-slate-500 uppercase tracking-wider mt-0.5">{profile.chineseZodiac.fullName}</p>
-          </div>
+          <CosmicInfo type="lifePath" value={profile.lifePath} className="flex-1">
+            <div className="w-full p-3 rounded-xl bg-amber-accent/5 border border-amber-accent/10 text-center">
+              <span className="text-lg font-bold text-gradient-gold">{profile.lifePath}</span>
+              <p className="text-[9px] text-slate-500 uppercase tracking-wider mt-0.5">{lp?.name}</p>
+            </div>
+          </CosmicInfo>
+          <CosmicInfo type="westernZodiac" value={profile.westernZodiac.sign} className="flex-1">
+            <div className="w-full p-3 rounded-xl bg-mode-personal/5 border border-mode-personal/10 text-center">
+              <span className="text-lg">{profile.westernZodiac.symbol}</span>
+              <p className="text-[9px] text-slate-500 uppercase tracking-wider mt-0.5">{profile.westernZodiac.sign}</p>
+            </div>
+          </CosmicInfo>
+          <CosmicInfo type="chineseZodiac" value={profile.chineseZodiac.animal} className="flex-1">
+            <div className="w-full p-3 rounded-xl bg-green-500/5 border border-green-500/10 text-center">
+              <span className="text-lg">{profile.chineseZodiac.symbol}</span>
+              <p className="text-[9px] text-slate-500 uppercase tracking-wider mt-0.5">{profile.chineseZodiac.fullName}</p>
+            </div>
+          </CosmicInfo>
         </div>
 
         {/* Deep Compatibility Expandable */}
@@ -122,7 +141,7 @@ export default function PartnerCard({ profile, allProfiles = [], currentUser }: 
         >
           <div className="flex items-center gap-2">
             <Heart size={14} className="text-mode-partner" />
-            <span className="text-xs font-semibold text-slate-300">Deep Compatibility Analysis</span>
+            <span className="text-xs font-semibold text-slate-300">{t('deepCompatibility')}</span>
           </div>
           {expanded
             ? <ChevronUp size={16} className="text-slate-500" />
@@ -139,11 +158,11 @@ export default function PartnerCard({ profile, allProfiles = [], currentUser }: 
               transition={{ duration: 0.3 }}
               className="space-y-3 overflow-hidden"
             >
-              <CompatibilityBar label="Emotional Bond" score={emotional} color="#ec4899" delay={0} />
-              <CompatibilityBar label="Life Goals" score={lifeGoals} color="#f472b6" delay={0.1} />
-              <CompatibilityBar label="Communication" score={communication} color="#f9a8d4" delay={0.2} />
-              <CompatibilityBar label="Values Match" score={values} color="#ec4899" delay={0.3} />
-              <CompatibilityBar label="Long-term Potential" score={longTerm} color="#db2777" delay={0.4} />
+              <CompatibilityBar label={t('emotionalBond')} score={emotional} color="#ec4899" delay={0} />
+              <CompatibilityBar label={t('lifeGoals')} score={lifeGoals} color="#f472b6" delay={0.1} />
+              <CompatibilityBar label={t('communication')} score={communication} color="#f9a8d4" delay={0.2} />
+              <CompatibilityBar label={t('valuesMatch')} score={values} color="#ec4899" delay={0.3} />
+              <CompatibilityBar label={t('longTermPotential')} score={longTerm} color="#db2777" delay={0.4} />
             </motion.div>
           )}
         </AnimatePresence>

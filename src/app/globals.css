@@ -8,6 +8,7 @@
   --color-mode-attraction: #f97316;
   --color-mode-business: #10b981;
   --color-mode-partner: #ec4899;
+  --color-mode-messages: #6366f1;
   --color-element-metal: #94a3b8;
   --color-element-water: #3b82f6;
   --color-element-wood: #22c55e;
@@ -20,11 +21,18 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
 html, body {
   background: #020617;
   color: white;
   overflow-x: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
 }
 
 /* ---- Cosmic Background ---- */
@@ -50,6 +58,20 @@ html, body {
   backdrop-filter: blur(32px) saturate(1.8);
   -webkit-backdrop-filter: blur(32px) saturate(1.8);
   border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.cosmic-tooltip-panel {
+  position: absolute;
+  z-index: 50;
+  min-width: 180px;
+  max-width: 220px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 /* ---- Stars ---- */
@@ -149,6 +171,7 @@ html, body {
 .glow-attraction { box-shadow: 0 0 30px rgba(249, 115, 22, 0.2), 0 0 60px rgba(249, 115, 22, 0.1); }
 .glow-business { box-shadow: 0 0 30px rgba(16, 185, 129, 0.2), 0 0 60px rgba(16, 185, 129, 0.1); }
 .glow-partner { box-shadow: 0 0 30px rgba(236, 72, 153, 0.2), 0 0 60px rgba(236, 72, 153, 0.1); }
+.glow-messages { box-shadow: 0 0 30px rgba(99, 102, 241, 0.2), 0 0 60px rgba(99, 102, 241, 0.1); }
 
 /* ---- Gradient Texts ---- */
 .text-gradient-cosmic {
@@ -228,4 +251,57 @@ html, body {
 /* ---- Smooth Transitions ---- */
 .transition-smooth {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---- Glass Card Subtle ---- */
+.glass-card-subtle {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+}
+
+/* ---- Deep Photo Gradient ---- */
+.photo-gradient-deep {
+  background:
+    linear-gradient(to top, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.7) 25%, transparent 55%),
+    linear-gradient(to bottom, rgba(2, 6, 23, 0.4) 0%, transparent 20%);
+}
+
+/* ---- Noise Overlay ---- */
+.noise-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
+
+/* ---- Shooting Stars ---- */
+@keyframes shoot {
+  0% { transform: translateX(0) translateY(0) rotate(-45deg); opacity: 1; }
+  100% { transform: translateX(300px) translateY(300px) rotate(-45deg); opacity: 0; }
+}
+
+.shooting-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: shoot 1s ease-out forwards;
+  z-index: 1;
+}
+
+.shooting-star::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(to left, white, transparent);
+  transform-origin: right center;
 }

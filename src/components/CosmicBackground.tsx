@@ -46,12 +46,27 @@ export default function CosmicBackground() {
       container.appendChild(orb);
     });
 
+    // Shooting stars
+    const spawnShootingStar = () => {
+      const star = document.createElement("div");
+      star.className = "shooting-star";
+      star.style.left = `${Math.random() * 70}%`;
+      star.style.top = `${Math.random() * 40}%`;
+      container.appendChild(star);
+      setTimeout(() => star.remove(), 1200);
+    };
+
+    const shootingInterval = setInterval(() => {
+      spawnShootingStar();
+    }, 6000 + Math.random() * 6000);
+
     return () => {
+      clearInterval(shootingInterval);
       while (container.firstChild) container.removeChild(container.firstChild);
     };
   }, []);
 
   return (
-    <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0 cosmic-bg overflow-hidden" />
+    <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0 cosmic-bg overflow-hidden noise-overlay" />
   );
 }
