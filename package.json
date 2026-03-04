@@ -19,6 +19,8 @@
     "@auth/prisma-adapter": "^2.11.1",
     "@aws-sdk/client-sns": "^3.995.0",
     "@capacitor/android": "^8.1.0",
+    "@capacitor/app": "^8.0.1",
+    "@capacitor/browser": "^8.0.1",
     "@capacitor/cli": "^8.1.0",
     "@capacitor/core": "^8.1.0",
     "@capacitor/haptics": "^8.0.0",

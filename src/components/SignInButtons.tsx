@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { Mail, Loader2 } from "lucide-react";
+import { Capacitor } from "@capacitor/core";
 import {
   isValidEmailFormat,
   isDisposableEmail,
@@ -188,7 +189,14 @@ export default function SignInButtons() {
 
       {/* Google */}
       <button
-        onClick={() => signIn("google", { redirectTo: "/" })}
+        onClick={async () => {
+          if (Capacitor.isNativePlatform()) {
+            const { Browser } = await import("@capacitor/browser");
+            await Browser.open({ url: `${window.location.origin}/api/auth-mobile/google` });
+          } else {
+            signIn("google", { redirectTo: "/" });
+          }
+        }}
         className="flex items-center justify-center gap-3 w-full py-4 px-4 rounded-full bg-white text-slate-800 font-semibold text-sm hover:bg-slate-100 transition-colors active:scale-[0.98]"
       >
         <svg width="20" height="20" viewBox="0 0 24 24">

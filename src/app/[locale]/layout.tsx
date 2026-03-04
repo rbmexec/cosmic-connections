@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getLocale } from "next-intl/server";
 import { locales } from "@/i18n/config";
 import AuthProvider from "@/components/AuthProvider";
+import CapacitorAuthProvider from "@/components/CapacitorAuthProvider";
 import { SubscriptionProvider } from "@/lib/subscription-context";
 import { NotificationProvider } from "@/lib/notification-context";
 import { OverlayProvider } from "@/lib/overlay-context";
@@ -78,15 +79,17 @@ export default async function LocaleLayout({ children }: { children: React.React
     <html lang={locale} dir={dir} className={fontVars}>
       <body className="antialiased min-h-[100dvh] overflow-x-hidden">
         <AuthProvider>
-          <NextIntlClientProvider messages={messages}>
-            <SubscriptionProvider>
-              <NotificationProvider>
-                <OverlayProvider>
-                  {children}
-                </OverlayProvider>
-              </NotificationProvider>
-            </SubscriptionProvider>
-          </NextIntlClientProvider>
+          <CapacitorAuthProvider>
+            <NextIntlClientProvider messages={messages}>
+              <SubscriptionProvider>
+                <NotificationProvider>
+                  <OverlayProvider>
+                    {children}
+                  </OverlayProvider>
+                </NotificationProvider>
+              </SubscriptionProvider>
+            </NextIntlClientProvider>
+          </CapacitorAuthProvider>
         </AuthProvider>
       </body>
     </html>
