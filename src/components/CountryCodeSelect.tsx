@@ -5,8 +5,8 @@ import { ChevronDown, Search } from "lucide-react";
 import { countryCodes, type CountryCode } from "@/data/country-codes";
 
 interface CountryCodeSelectProps {
-  value: string;
-  onChange: (dial: string) => void;
+  value: string;          // ISO country code, e.g. "US"
+  onChange: (code: string) => void;  // emits ISO country code
 }
 
 export default function CountryCodeSelect({
@@ -20,7 +20,7 @@ export default function CountryCodeSelect({
   const listRef = useRef<HTMLDivElement>(null);
 
   const selected = useMemo(
-    () => countryCodes.find((c) => c.dial === value) ?? countryCodes.find((c) => c.code === "US")!,
+    () => countryCodes.find((c) => c.code === value) ?? countryCodes.find((c) => c.code === "US")!,
     [value]
   );
 
@@ -56,7 +56,7 @@ export default function CountryCodeSelect({
   }, [open]);
 
   const handleSelect = (country: CountryCode) => {
-    onChange(country.dial);
+    onChange(country.code);
     setOpen(false);
     setSearch("");
   };
@@ -106,7 +106,7 @@ export default function CountryCodeSelect({
                   type="button"
                   onClick={() => handleSelect(country)}
                   className={`flex items-center gap-3 w-full px-3 py-2.5 text-left hover:bg-white/10 transition-colors ${
-                    country.dial === value ? "bg-violet-500/15" : ""
+                    country.code === value ? "bg-violet-500/15" : ""
                   }`}
                 >
                   <span className="text-lg">{country.flag}</span>

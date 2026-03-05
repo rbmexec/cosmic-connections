@@ -4,7 +4,7 @@ import Resend from "next-auth/providers/resend";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
-import { verifyOtp } from "@/lib/otp";
+import { checkVerification } from "@/lib/twilio";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -24,32 +24,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const phone = credentials?.phone as string | undefined;
         const code = credentials?.code as string | undefined;
 
-        if (!phone || !code) return null;
+        if (!phone || !code) {
+          console.log("[auth] Missing phone or code", { phone: !!phone, code: !!code });
+          return null;
+        }
 
-        const verification = await prisma.phoneVerification.findFirst({
-          where: {
-            phone,
-            verified: false,
-            expiresAt: { gte: new Date() },
-          },
-          orderBy: { createdAt: "desc" },
-        });
-
-        if (!verification) return null;
-        if (verification.attempts >= 5) return null;
-
-        await prisma.phoneVerification.update({
-          where: { id: verification.id },
-          data: { attempts: { increment: 1 } },
-        });
-
-        const valid = await verifyOtp(code, verification.code);
-        if (!valid) return null;
-
-        await prisma.phoneVerification.update({
-          where: { id: verification.id },
-          data: { verified: true },
-        });
+        try {
+          const { status, valid } = await checkVerification(phone, code);
+          console.log("[auth] Twilio verify result:", { phone, status, valid });
+          if (status !== "approved" || !valid) return null;
+        } catch (err) {
+          console.error("[auth] Twilio checkVerification error:", err);
+          return null;
+        }
 
         let user = await prisma.user.findUnique({ where: { phone } });
 
@@ -75,13 +62,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             data: { phoneVerified: new Date() },
           });
         }
-
-        await prisma.phoneVerification.deleteMany({
-          where: {
-            phone,
-            id: { not: verification.id },
-          },
-        });
 
         return { id: user.id, email: user.email, name: user.name };
       },

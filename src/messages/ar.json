@@ -354,7 +354,13 @@
     "tryDifferentEmail": "استخدم بريدًا إلكترونيًا آخر",
     "or": "أو",
     "back": "رجوع",
-    "authError": "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى."
+    "authError": "فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+    "continueWithPhone": "المتابعة بالهاتف",
+    "sendCode": "إرسال الرمز",
+    "sendFailed": "فشل إرسال الرمز. يرجى المحاولة مرة أخرى.",
+    "otpSent": "تم إرسال الرمز إلى {phone}",
+    "invalidCode": "رمز غير صالح. يرجى المحاولة مرة أخرى.",
+    "resendCode": "إعادة إرسال الرمز"
   },
   "instagram": {
     "connectInstagram": "ربط Instagram",

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import CountryCodeSelect from "@/components/CountryCodeSelect";
+import { countryCodes } from "@/data/country-codes";
 
 interface PhoneSignInProps {
   onBack: () => void;
@@ -17,7 +18,7 @@ export default function PhoneSignIn({ onBack }: PhoneSignInProps) {
   const router = useRouter();
 
   const [view, setView] = useState<"phone" | "otp">("phone");
-  const [countryCode, setCountryCode] = useState("+1");
+  const [countryIso, setCountryIso] = useState("US");
   const [phone, setPhone] = useState("");
   const [fullPhone, setFullPhone] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,7 +40,8 @@ export default function PhoneSignIn({ onBack }: PhoneSignInProps) {
     setError("");
     setLoading(true);
 
-    const number = `${countryCode}${phone}`;
+    const dial = countryCodes.find((c) => c.code === countryIso)?.dial ?? "+1";
+    const number = `${dial}${phone}`;
 
     try {
       const res = await fetch("/api/auth/phone/send", {
@@ -65,7 +67,7 @@ export default function PhoneSignIn({ onBack }: PhoneSignInProps) {
     } finally {
       setLoading(false);
     }
-  }, [countryCode, phone, t]);
+  }, [countryIso, phone, t]);
 
   const verifyCode = useCallback(
     async (code: string) => {
@@ -154,8 +156,8 @@ export default function PhoneSignIn({ onBack }: PhoneSignInProps) {
           {/* Phone input */}
           <div className="flex gap-3 items-center w-full">
             <CountryCodeSelect
-              value={countryCode}
-              onChange={setCountryCode}
+              value={countryIso}
+              onChange={setCountryIso}
             />
             <div className="flex-1 border-b border-white/15 pb-2">
               <input
@@ -197,6 +199,7 @@ export default function PhoneSignIn({ onBack }: PhoneSignInProps) {
           <p className="text-sm text-slate-400 text-center">
             {t("otpSent", { phone: fullPhone })}
           </p>
+
 
           {/* 6-digit OTP input */}
           <div className="flex justify-center gap-2.5">

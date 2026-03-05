@@ -427,7 +427,13 @@
     "tryDifferentEmail": "दूसरा ईमेल उपयोग करें",
     "or": "या",
     "back": "वापस",
-    "authError": "साइन इन विफल। कृपया पुनः प्रयास करें।"
+    "authError": "साइन इन विफल। कृपया पुनः प्रयास करें।",
+    "continueWithPhone": "फ़ोन से जारी रखें",
+    "sendCode": "कोड भेजें",
+    "sendFailed": "कोड भेजने में विफल। कृपया पुनः प्रयास करें।",
+    "otpSent": "{phone} पर कोड भेजा गया",
+    "invalidCode": "अमान्य कोड। कृपया पुनः प्रयास करें।",
+    "resendCode": "कोड पुनः भेजें"
   },
   "instagram": {
     "connectInstagram": "Instagram कनेक्ट करें",

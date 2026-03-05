@@ -360,7 +360,13 @@
     "tryDifferentEmail": "使用其他邮箱",
     "or": "或",
     "back": "返回",
-    "authError": "登录失败，请重试。"
+    "authError": "登录失败，请重试。",
+    "continueWithPhone": "使用手机号继续",
+    "sendCode": "发送验证码",
+    "sendFailed": "发送验证码失败，请重试。",
+    "otpSent": "验证码已发送至 {phone}",
+    "invalidCode": "验证码无效，请重试。",
+    "resendCode": "重新发送验证码"
   },
   "instagram": {
     "connectInstagram": "连接 Instagram",

@@ -1,24 +1,23 @@
-import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+import Twilio from "twilio";
 
-const sns = new SNSClient({
-  region: process.env.AWS_REGION || "us-east-1",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  },
-});
+const accountSid = process.env.TWILIO_ACCOUNT_SID!;
+const authToken = process.env.TWILIO_AUTH_TOKEN!;
+const serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID!;
 
-export async function sendSms(to: string, body: string) {
-  await sns.send(
-    new PublishCommand({
-      PhoneNumber: to,
-      Message: body,
-      MessageAttributes: {
-        "AWS.SNS.SMS.SMSType": {
-          DataType: "String",
-          StringValue: "Transactional",
-        },
-      },
-    })
-  );
+const client = Twilio(accountSid, authToken);
+
+export async function sendVerification(phone: string) {
+  const verification = await client.verify.v2
+    .services(serviceSid)
+    .verifications.create({ to: phone, channel: "sms" });
+
+  return verification.status; // "pending"
+}
+
+export async function checkVerification(phone: string, code: string) {
+  const check = await client.verify.v2
+    .services(serviceSid)
+    .verificationChecks.create({ to: phone, code });
+
+  return { status: check.status, valid: check.valid };
 }

@@ -354,7 +354,13 @@
     "tryDifferentEmail": "Usar otro correo",
     "or": "o",
     "back": "Volver",
-    "authError": "Error al iniciar sesión. Inténtalo de nuevo."
+    "authError": "Error al iniciar sesión. Inténtalo de nuevo.",
+    "continueWithPhone": "Continuar con Teléfono",
+    "sendCode": "Enviar Código",
+    "sendFailed": "Error al enviar el código. Inténtalo de nuevo.",
+    "otpSent": "Código enviado a {phone}",
+    "invalidCode": "Código inválido. Inténtalo de nuevo.",
+    "resendCode": "Reenviar código"
   },
   "instagram": {
     "connectInstagram": "Conectar Instagram",

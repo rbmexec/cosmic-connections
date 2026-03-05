@@ -359,7 +359,13 @@
     "tryDifferentEmail": "Utiliser un autre e-mail",
     "or": "ou",
     "back": "Retour",
-    "authError": "Échec de la connexion. Veuillez réessayer."
+    "authError": "Échec de la connexion. Veuillez réessayer.",
+    "continueWithPhone": "Continuer avec Téléphone",
+    "sendCode": "Envoyer le Code",
+    "sendFailed": "Échec de l'envoi du code. Veuillez réessayer.",
+    "otpSent": "Code envoyé au {phone}",
+    "invalidCode": "Code invalide. Veuillez réessayer.",
+    "resendCode": "Renvoyer le code"
   },
   "instagram": {
     "connectInstagram": "Connecter Instagram",

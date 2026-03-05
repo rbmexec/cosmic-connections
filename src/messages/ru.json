@@ -360,7 +360,13 @@
     "tryDifferentEmail": "Использовать другой email",
     "or": "или",
     "back": "Назад",
-    "authError": "Ошибка входа. Попробуйте снова."
+    "authError": "Ошибка входа. Попробуйте снова.",
+    "continueWithPhone": "Продолжить с Телефоном",
+    "sendCode": "Отправить Код",
+    "sendFailed": "Не удалось отправить код. Попробуйте снова.",
+    "otpSent": "Код отправлен на {phone}",
+    "invalidCode": "Неверный код. Попробуйте снова.",
+    "resendCode": "Отправить код повторно"
   },
   "instagram": {
     "connectInstagram": "Подключить Instagram",

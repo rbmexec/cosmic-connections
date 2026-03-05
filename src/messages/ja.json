@@ -360,7 +360,13 @@
     "tryDifferentEmail": "別のメールを使用",
     "or": "または",
     "back": "戻る",
-    "authError": "サインインに失敗しました。もう一度お試しください。"
+    "authError": "サインインに失敗しました。もう一度お試しください。",
+    "continueWithPhone": "電話番号で続ける",
+    "sendCode": "コードを送信",
+    "sendFailed": "コードの送信に失敗しました。もう一度お試しください。",
+    "otpSent": "{phone} にコードを送信しました",
+    "invalidCode": "無効なコードです。もう一度お試しください。",
+    "resendCode": "コードを再送信"
   },
   "instagram": {
     "connectInstagram": "Instagramを接続",
