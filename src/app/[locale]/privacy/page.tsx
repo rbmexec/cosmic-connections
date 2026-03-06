@@ -7,7 +7,7 @@ export default function PrivacyPolicy() {
         <Link href="/" className="text-violet-400 text-sm hover:underline">&larr; Back to app</Link>
 
         <h1 className="text-3xl font-light text-white mt-8 mb-2">Privacy Policy</h1>
-        <p className="text-xs text-white/30 mb-10">Last updated: February 2026</p>
+        <p className="text-xs text-white/30 mb-10">Last updated: March 2026 &mdash; BH Strategic Advisory</p>
 
         <div className="space-y-8 text-sm leading-relaxed">
           <section>
@@ -50,32 +50,52 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-lg font-medium text-white mb-3">5. Data Retention</h2>
-            <p className="text-white/60">Your data is retained as long as your account is active. You may request deletion of your account and associated data at any time by contacting us at the email below.</p>
+            <p className="text-white/60">Your data is retained as long as your account is active. You may request deletion of your account and associated data at any time by contacting us at the email below or through the in-app account settings.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-medium text-white mb-3">6. Your Rights</h2>
-            <p className="text-white/60">Depending on your location, you may have the right to access, correct, delete, or export your personal data. To exercise these rights, contact us at the address below.</p>
+            <h2 className="text-lg font-medium text-white mb-3">6. Account Deletion</h2>
+            <p className="text-white/60 mb-2">You may delete your account and all associated data at any time. To do so:</p>
+            <ul className="list-disc list-inside space-y-1 text-white/60">
+              <li>Go to <strong className="text-white/80">Settings → Delete Account</strong> inside the app, or</li>
+              <li>Email <a href="mailto:privacy@astr8.ai" className="text-violet-400 hover:underline">privacy@astr8.ai</a> with the subject line &quot;Delete My Account&quot;</li>
+            </ul>
+            <p className="text-white/60 mt-2">Upon deletion, all personal data including your profile, matches, and messages will be permanently removed within 30 days. Anonymized aggregate data may be retained for analytics purposes.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-medium text-white mb-3">7. Cookies</h2>
+            <h2 className="text-lg font-medium text-white mb-3">7. Your Rights</h2>
+            <p className="text-white/60">Depending on your location, you may have the right to access, correct, delete, or export your personal data. California residents have additional rights under CCPA. EU/UK residents have rights under GDPR. To exercise these rights, contact us at the address below.</p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-medium text-white mb-3">8. Children&apos;s Privacy</h2>
+            <p className="text-white/60">astr is intended for users 17 and older. We do not knowingly collect personal information from anyone under 17. If you believe a minor has provided us with personal information, please contact us immediately.</p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-medium text-white mb-3">9. Cookies</h2>
             <p className="text-white/60">We use essential cookies for authentication and session management. We do not use third-party tracking or advertising cookies.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-medium text-white mb-3">8. Changes to This Policy</h2>
-            <p className="text-white/60">We may update this policy from time to time. We will notify users of significant changes via the app or email.</p>
+            <h2 className="text-lg font-medium text-white mb-3">10. Changes to This Policy</h2>
+            <p className="text-white/60">We may update this policy from time to time. We will notify users of significant changes via the app or email. Continued use of the app after changes constitutes acceptance of the updated policy.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-medium text-white mb-3">9. Contact</h2>
-            <p className="text-white/60">For privacy-related questions or data requests, contact us at <a href="mailto:privacy@astr.app" className="text-violet-400 hover:underline">privacy@astr.app</a>.</p>
+            <h2 className="text-lg font-medium text-white mb-3">11. Contact</h2>
+            <p className="text-white/60">For privacy-related questions or data requests, contact us at:</p>
+            <p className="text-white/60 mt-2">
+              <strong className="text-white/80">BH Strategic Advisory</strong><br />
+              <a href="mailto:privacy@astr8.ai" className="text-violet-400 hover:underline">privacy@astr8.ai</a><br />
+              <a href="https://www.astr8.ai" className="text-violet-400 hover:underline">www.astr8.ai</a>
+            </p>
           </section>
         </div>
 
         <div className="mt-16 pt-8 border-t border-white/5 text-center text-xs text-white/20">
-          astr &mdash; Cosmic Connections
+          astr &mdash; BH Strategic Advisory &copy; 2026
         </div>
       </div>
     </div>
